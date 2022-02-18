@@ -2,25 +2,21 @@
 # coding:utf-8
 
 """
-    Save all folders user on ssd backup
+    Save all folders user on SSD disk
 """
 
 import os
 
 
-os.system("clear")
-os.system("lsblk")
-
-
 class BackupFolders:
     """
-    Save all folders user
+    Save all folder user (important)
     """
-
-    NB_LINES = f"{'=' * 50}"
 
     def __init__(self):
         self.path_destination = ""
+        self.rsync_option = ""
+        self.nb_lines = f"{'=' * 50}"
         self.folders = [
             "Documents",
             "GitHub",
@@ -30,7 +26,6 @@ class BackupFolders:
             "Téléchargements",
             "Vidéos",
         ]
-        self.rsync_option = ""
 
     def f_string_head(self) -> None:
         """
@@ -38,23 +33,39 @@ class BackupFolders:
         """
 
         print(
-            f"\n\n{self.NB_LINES}\n\n"
-            f"[ Synchronisation du dossier '/home/{os.getlogin()}' ]\n\n"
+            f"\n\n{self.nb_lines}\n\n"
+            f"[ Synchronisation of folder '/home/{os.getlogin()}/' ]\n\n"
+            f"{self.nb_lines}\n\n"
         )
+
+    def path_of_destination_and_options(self) -> None:
+        """
+        Get the destination path
+        """
+
+        os.system("lsblk -f")
+
+        self.path_destination = input("\n\n- Destination directory path : ")
+
+        for folder in self.folders:
+            folder = f"{self.path_destination}/{os.getlogin()}/home_mike/{folder}/"
+            os.makedirs(folder, exist_ok=True)
 
     def select_option(self) -> str:
         """
-        Select options for rsync
+        Select option for rsync
         """
+
+        select_option = "Select option for rsync :"
 
         choice = int(
             input(
-                f"\n\nSelect option for rsync :\n{'-' * 25}\n\n"
+                f"\n\n{select_option}\n{'-' * len(select_option)}\n\n"
                 f"\t[ 1 ] Direct sync (Ext4)\n"
                 f"\t[ 2 ] Dry-run sync (checking for differences) - (Ext4)\n"
                 f"\t[ 3 ] Direct sync (Ntfs)\n"
                 f"\t[ 4 ] Dry-run sync (checking for differences) - (Ntfs)\n\n"
-                f"- Select your option : "
+                f"- Select option : "
             )
         )
 
@@ -69,17 +80,6 @@ class BackupFolders:
 
         return self.rsync_option
 
-    def path_of_destination_and_options(self) -> None:
-        """
-        Get the destination path
-        """
-
-        self.path_destination = input("- Destination directory path : ")
-
-        for folder in self.folders:
-            folder = f"{self.path_destination}/{os.getlogin()}/home_mike/{folder}/"
-            os.makedirs(folder, exist_ok=True)
-
     def sync_laptop_to_ssd(self) -> None:
         """
         Rsync the folders user
@@ -93,7 +93,7 @@ class BackupFolders:
             path_folder = f"> Synchronisation du dossier '{folder}'"
 
             print(
-                f"\n\n{self.NB_LINES}\n"
+                f"\n\n{self.nb_lines}\n"
                 f"{path_folder}\n"
                 f"{'-' * len(path_folder)}\n"
             )
@@ -102,13 +102,15 @@ class BackupFolders:
                 f"{self.path_destination}/{os.getlogin()}/home_mike/{folder}/"
             )
 
-            print(f"\n{self.NB_LINES}\n\n")
+            print(f"\n{self.nb_lines}\n\n")
 
 
 def main():
     """
     Execute the program
     """
+
+    os.system("clear")
 
     backup = BackupFolders()
     backup.f_string_head()
