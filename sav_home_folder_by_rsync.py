@@ -2,7 +2,7 @@
 # coding:utf-8
 
 """
-    Save all folders user on SSD disk
+Save all folders user on SSD disk
 """
 
 import os
@@ -14,8 +14,10 @@ class BackupFolders:
     """
 
     def __init__(self):
+        self.home_name = f"/home/{os.getlogin()}/"
         self.path_destination = ""
         self.rsync_option = ""
+        self.type_synchronisation = int()
         self.nb_lines = f"{'=' * 50}"
         self.folders = [
             "Documents",
@@ -38,10 +40,36 @@ class BackupFolders:
             f"{self.nb_lines}\n\n"
         )
 
-    def path_of_destination_and_options(self) -> None:
+    def f_string_path_folder(self, folder) -> None:
+        """
+        Show folder synchronized
+        """
+
+        path_folder = f"> Synchronisation of folder '{folder}'"
+        print(f"\n\n{self.nb_lines}\n" f"{path_folder}\n" f"{'-' * len(path_folder)}\n")
+
+    def backup_or_restore(self) -> None:
+        """
+        Select option of type de synchronisation
+        """
+
+        choice_backup_or_restore = int(
+            input(
+                f"Select option of type de synchronisation :\n\n"
+                f"\t [ 1 ] Backup of laptop to SSD\n"
+                f"\t [ 2 ] Restore from SSD to laptop\n\n"
+                f"- Select option : "
+            )
+        )
+
+        self.type_synchronisation = choice_backup_or_restore
+
+    def path_of_destination(self) -> None:
         """
         Get the destination path
         """
+
+        print("\n\n")
 
         os.system("lsblk -f")
 
@@ -51,7 +79,7 @@ class BackupFolders:
             folder = f"{self.path_destination}/{os.getlogin()}/home_mike/{folder}/"
             os.makedirs(folder, exist_ok=True)
 
-    def select_option(self) -> str:
+    def select_option_rsync(self) -> str:
         """
         Select option for rsync
         """
@@ -80,9 +108,10 @@ class BackupFolders:
 
         return self.rsync_option
 
-    def sync_laptop_to_ssd(self) -> None:
+    def synchronisation(self) -> None:
         """
-        Rsync the folders user
+        Rsync the folder user (sync laptop to ssd disk) if self.type_synchronisation = 1
+        Rsync the folder user (sync ssd disk to laptop) if self.type_synchronisation = 2
         """
 
         if self.rsync_option in ("-rtlogvh", "-rtlongvh"):
@@ -90,19 +119,23 @@ class BackupFolders:
 
         for folder in self.folders:
 
-            path_folder = f"> Synchronisation du dossier '{folder}'"
+            self.f_string_path_folder(folder)
 
-            print(
-                f"\n\n{self.nb_lines}\n"
-                f"{path_folder}\n"
-                f"{'-' * len(path_folder)}\n"
-            )
-            os.system(
-                f"rsync {self.rsync_option} --delete /home/{os.getlogin()}/{folder}/ "
-                f"{self.path_destination}/{os.getlogin()}/home_mike/{folder}/"
-            )
+            if self.type_synchronisation == 1:
+                os.system(
+                    f"rsync {self.rsync_option} --delete /home/{os.getlogin()}/{folder}/ "
+                    f"{self.path_destination}/{os.getlogin()}/home_mike/{folder}/"
+                )
 
-            print(f"\n{self.nb_lines}\n\n")
+                print(f"\n{self.nb_lines}\n\n")
+
+            if self.type_synchronisation == 2:
+                os.system(
+                    f"rsync {self.rsync_option} {self.path_destination}/{os.getlogin()}/home_mike/{folder}/ "
+                    f"{self.home_name}/{folder}/"
+                )
+
+                print(f"\n{self.nb_lines}\n\n")
 
 
 def main():
@@ -114,9 +147,10 @@ def main():
 
     backup = BackupFolders()
     backup.f_string_head()
-    backup.path_of_destination_and_options()
-    backup.select_option()
-    backup.sync_laptop_to_ssd()
+    backup.backup_or_restore()
+    backup.path_of_destination()
+    backup.select_option_rsync()
+    backup.synchronisation()
 
 
 if __name__ == "__main__":
