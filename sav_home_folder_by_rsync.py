@@ -17,8 +17,7 @@ class BackupFolders:
     Save all folders user
     """
 
-    NB_LINES_1 = 60
-    NB_LINES_2 = 45
+    NB_LINES = f"{'=' * 50}"
 
     def __init__(self):
         self.path_destination = ""
@@ -39,7 +38,7 @@ class BackupFolders:
         """
 
         print(
-            f"\n\n{'-' * self.NB_LINES_2}\n\n"
+            f"\n\n{self.NB_LINES}\n\n"
             f"[ Synchronisation du dossier '/home/{os.getlogin()}' ]\n\n"
         )
 
@@ -94,7 +93,7 @@ class BackupFolders:
             path_folder = f"> Synchronisation du dossier '{folder}'"
 
             print(
-                f"\n\n{'=' * self.NB_LINES_1}\n"
+                f"\n\n{self.NB_LINES}\n"
                 f"{path_folder}\n"
                 f"{'-' * len(path_folder)}\n"
             )
@@ -103,7 +102,7 @@ class BackupFolders:
                 f"{self.path_destination}/{os.getlogin()}/home_mike/{folder}/"
             )
 
-            print(f"\n{'=' * self.NB_LINES_1}\n\n")
+            print(f"\n{self.NB_LINES}\n\n")
 
 
 def main():
