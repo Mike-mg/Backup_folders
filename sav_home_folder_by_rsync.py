@@ -10,7 +10,7 @@ import os
 
 class BackupFolders:
     """
-    Save all folder user (important)
+    Save all folder (important) user
     """
 
     def __init__(self):
