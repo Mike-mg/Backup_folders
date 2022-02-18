@@ -2,7 +2,7 @@
 # coding:utf-8
 
 """
-Save all folders user on SSD disk
+Save and restore all folders user
 """
 
 import os
