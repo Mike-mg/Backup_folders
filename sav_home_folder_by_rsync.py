@@ -47,9 +47,9 @@ class BackupFolders:
 
         choice_backup_or_restore = int(
             input(
-                f"Select option of type de synchronisation :\n\n"
-                f"\t [ 1 ] Backup of laptop to SSD\n"
-                f"\t [ 2 ] Restore from SSD to laptop\n\n"
+                f"{'Select option of type de synchronisation :'}\n\n"
+                f"\t{'[ 1 ] Backup of laptop to SSD'}\n"
+                f"\t{'[ 2 ] Restore from SSD to laptop'}\n\n"
                 f"- Select option : "
             )
         )
