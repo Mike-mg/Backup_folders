@@ -15,7 +15,7 @@ class BackupFolders:
     """
 
     def __init__(self):
-        self.views = views.ViewsBackup()
+        self.views = views.views_backup.ViewsToBackup()
         self.name_home_user = f"/home/{os.getlogin()}/"
         self.path = ""
         self.rsync_option = ""
@@ -29,44 +29,26 @@ class BackupFolders:
             "Téléchargements",
             "Vidéos",
         ]
+        self.views.f_string_head()
 
     def backup_or_restore(self) -> None:
         """
         Select option of type de synchronisation
         """
-
-        self.type_synchronisation = self.views.backup_or_restore()
+        self.type_synchronisation = self.views.f_string_backup_or_restore()
 
     def path_of_destination(self) -> None:
         """
         Get the destination path
         """
-
-        os.system("lsblk -f")
-
-        self.path = input("\n\n- Destination directory path : ")
-
-        for folder in self.folders:
-            folder = f"{self.path}/{os.getlogin()}/home_mike/{folder}/"
-            os.makedirs(folder, exist_ok=True)
+        self.path = self.views.f_string_path_of_destination(self.folders)
 
     def select_option_rsync(self) -> None:
         """
         Select option for rsync
         """
 
-        select_option = "Select option for rsync :"
-
-        choice = int(
-            input(
-                f"\n\n{select_option}\n{'-' * len(select_option)}\n\n"
-                f"\t[ 1 ] Direct sync (Ext4)\n"
-                f"\t[ 2 ] Dry-run sync (checking for differences) - (Ext4)\n"
-                f"\t[ 3 ] Direct sync (Ntfs)\n"
-                f"\t[ 4 ] Dry-run sync (checking for differences) - (Ntfs)\n\n"
-                f"- Select option : "
-            )
-        )
+        choice = self.views.f_string_select_option_rsync()
 
         if choice == 1:
             self.rsync_option = "-avh"
@@ -88,12 +70,7 @@ class BackupFolders:
 
         for folder in self.folders:
 
-            path_folder = f"> Synchronisation of folder '{folder}'"
-            print(
-                f"\n\n{self.nb_lines}\n"
-                f"{path_folder}\n"
-                f"{'-' * len(path_folder)}\n"
-            )
+            self.views.f_string_folder_sync(folder)
 
             if self.type_synchronisation == 1:
                 os.system(
@@ -110,21 +87,3 @@ class BackupFolders:
                 )
 
                 self.views.f_string_lines()
-
-
-def main():
-    """
-    Execute the program
-    """
-
-    os.system("clear")
-
-    backup = BackupFolders()
-    backup.backup_or_restore()
-    # backup.path_of_destination()
-    # backup.select_option_rsync()
-    # backup.synchronisation()
-
-
-if __name__ == "__main__":
-    main()
