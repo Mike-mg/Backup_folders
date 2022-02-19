@@ -106,8 +106,6 @@ class BackupFolders:
         elif choice == 4:
             self.rsync_option = "-rtlongvh"
 
-        return self.rsync_option
-
     def synchronisation(self) -> None:
         """
         Rsync the folder user (sync laptop to ssd disk) if self.type_synchronisation = 1
