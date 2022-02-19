@@ -6,6 +6,7 @@ Save and restore all folders user
 """
 
 import os
+import views
 
 
 class BackupFolders:
@@ -14,11 +15,11 @@ class BackupFolders:
     """
 
     def __init__(self):
+        self.views = views.ViewsBackup()
         self.name_home_user = f"/home/{os.getlogin()}/"
         self.path = ""
         self.rsync_option = ""
         self.type_synchronisation = int()
-        self.nb_lines = f"{'=' * 50}"
         self.folders = [
             "Documents",
             "GitHub",
@@ -29,39 +30,17 @@ class BackupFolders:
             "Vidéos",
         ]
 
-    def f_string_head(self) -> None:
-        """
-        Head string the program
-        """
-
-        print(
-            f"\n\n{self.nb_lines}\n\n"
-            f"[ Synchronisation of folder '/home/{os.getlogin()}/' ]\n\n"
-            f"{self.nb_lines}\n\n"
-        )
-
     def backup_or_restore(self) -> None:
         """
         Select option of type de synchronisation
         """
 
-        choice_backup_or_restore = int(
-            input(
-                f"{'Select option of type de synchronisation :'}\n\n"
-                f"\t{'[ 1 ] Backup of laptop to SSD'}\n"
-                f"\t{'[ 2 ] Restore from SSD to laptop'}\n\n"
-                f"- Select option : "
-            )
-        )
-
-        self.type_synchronisation = choice_backup_or_restore
+        self.type_synchronisation = self.views.backup_or_restore()
 
     def path_of_destination(self) -> None:
         """
         Get the destination path
         """
-
-        print("\n\n")
 
         os.system("lsblk -f")
 
@@ -122,7 +101,7 @@ class BackupFolders:
                     f"{self.path}/{os.getlogin()}/home_mike/{folder}/"
                 )
 
-                print(f"\n{self.nb_lines}\n\n")
+                self.views.f_string_lines()
 
             if self.type_synchronisation == 2:
                 os.system(
@@ -130,7 +109,7 @@ class BackupFolders:
                     f"{self.name_home_user}/{folder}/"
                 )
 
-                print(f"\n{self.nb_lines}\n\n")
+                self.views.f_string_lines()
 
 
 def main():
@@ -141,11 +120,10 @@ def main():
     os.system("clear")
 
     backup = BackupFolders()
-    backup.f_string_head()
     backup.backup_or_restore()
-    backup.path_of_destination()
-    backup.select_option_rsync()
-    backup.synchronisation()
+    # backup.path_of_destination()
+    # backup.select_option_rsync()
+    # backup.synchronisation()
 
 
 if __name__ == "__main__":
