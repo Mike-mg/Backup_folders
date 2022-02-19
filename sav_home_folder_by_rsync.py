@@ -10,12 +10,12 @@ import os
 
 class BackupFolders:
     """
-    Save all folder (important) user
+    Class that save all folder (important) user
     """
 
     def __init__(self):
-        self.home_name = f"/home/{os.getlogin()}/"
-        self.path_destination = ""
+        self.name_home_user = f"/home/{os.getlogin()}/"
+        self.path = ""
         self.rsync_option = ""
         self.type_synchronisation = int()
         self.nb_lines = f"{'=' * 50}"
@@ -39,14 +39,6 @@ class BackupFolders:
             f"[ Synchronisation of folder '/home/{os.getlogin()}/' ]\n\n"
             f"{self.nb_lines}\n\n"
         )
-
-    def f_string_path_folder(self, folder) -> None:
-        """
-        Show folder synchronized
-        """
-
-        path_folder = f"> Synchronisation of folder '{folder}'"
-        print(f"\n\n{self.nb_lines}\n" f"{path_folder}\n" f"{'-' * len(path_folder)}\n")
 
     def backup_or_restore(self) -> None:
         """
@@ -73,13 +65,13 @@ class BackupFolders:
 
         os.system("lsblk -f")
 
-        self.path_destination = input("\n\n- Destination directory path : ")
+        self.path = input("\n\n- Destination directory path : ")
 
         for folder in self.folders:
-            folder = f"{self.path_destination}/{os.getlogin()}/home_mike/{folder}/"
+            folder = f"{self.path}/{os.getlogin()}/home_mike/{folder}/"
             os.makedirs(folder, exist_ok=True)
 
-    def select_option_rsync(self) -> str:
+    def select_option_rsync(self) -> None:
         """
         Select option for rsync
         """
@@ -117,20 +109,25 @@ class BackupFolders:
 
         for folder in self.folders:
 
-            self.f_string_path_folder(folder)
+            path_folder = f"> Synchronisation of folder '{folder}'"
+            print(
+                f"\n\n{self.nb_lines}\n"
+                f"{path_folder}\n"
+                f"{'-' * len(path_folder)}\n"
+            )
 
             if self.type_synchronisation == 1:
                 os.system(
                     f"rsync {self.rsync_option} --delete /home/{os.getlogin()}/{folder}/ "
-                    f"{self.path_destination}/{os.getlogin()}/home_mike/{folder}/"
+                    f"{self.path}/{os.getlogin()}/home_mike/{folder}/"
                 )
 
                 print(f"\n{self.nb_lines}\n\n")
 
             if self.type_synchronisation == 2:
                 os.system(
-                    f"rsync {self.rsync_option} {self.path_destination}/{os.getlogin()}/home_mike/{folder}/ "
-                    f"{self.home_name}/{folder}/"
+                    f"rsync {self.rsync_option} {self.path}/{os.getlogin()}/home_mike/{folder}/ "
+                    f"{self.name_home_user}/{folder}/"
                 )
 
                 print(f"\n{self.nb_lines}\n\n")
