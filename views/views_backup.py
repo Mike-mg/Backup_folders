@@ -1,6 +1,10 @@
 #! /usr/bin/env python3
 # coding:utf-8
 
+"""
+Method views of Backup home folders
+"""
+
 import os
 
 
@@ -10,6 +14,7 @@ class ViewsToBackup:
     """
 
     def __init__(self):
+        self.nb_repeat = 100
         self.f_string_head()
 
     def f_string_head(self) -> None:
@@ -22,9 +27,16 @@ class ViewsToBackup:
         self.f_string_line("=", "\n", "\n")
 
     def f_string_line(self, symbol: str = "", n_1: str = "", n_2: str = "") -> None:
-        print(f"{n_1}{symbol * 100}{n_2}")
+        """
+        Show an line of symbol
+        """
+
+        print(f"{n_1}{symbol * self.nb_repeat}{n_2}")
 
     def backup_or_restore(self) -> int:
+        """
+        Select of the synchronisation
+        """
 
         choice_backup_or_restore = int(
             input(

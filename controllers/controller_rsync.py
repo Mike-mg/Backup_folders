@@ -86,4 +86,4 @@ class ControllerBackupFolders:
                     f"{self.name_home_user}/{folder}/"
                 )
 
-            self.views.f_string_line("=", "", "\n\n\n")
+            self.views.f_string_line('=',"","\n\n\n")
