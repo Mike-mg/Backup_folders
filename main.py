@@ -1,8 +1,12 @@
 #! /usr/bin/env python3
 # coding:utf-8
 
+"""
+Program entry point
+"""
+
 import os
-import sav_home_folder_by_rsync
+import controllers
 
 
 def main():
@@ -12,7 +16,7 @@ def main():
 
     os.system("clear")
 
-    backup = sav_home_folder_by_rsync.BackupFolders()
+    backup = controllers.controller_rsync.ControllerBackupFolders()
     backup.backup_or_restore()
     backup.path_of_destination()
     backup.select_option_rsync()

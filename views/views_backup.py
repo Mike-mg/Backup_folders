@@ -80,12 +80,4 @@ class ViewsToBackup:
         """
 
         path_folder = f"> Synchronisation of folder '{folder}'"
-        print(
-            f"\n\n{self.nb_lines}\n"
-            f"{path_folder}\n"
-            f"{'-' * len(path_folder)}\n"
-        )
-
-
-
-
+        print(f"\n\n{self.nb_lines}\n" f"{path_folder}\n" f"{'-' * len(path_folder)}\n")
