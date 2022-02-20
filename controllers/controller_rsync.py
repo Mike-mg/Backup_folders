@@ -6,6 +6,7 @@ Save and restore all folders user
 """
 
 import os
+
 import views
 
 
@@ -29,13 +30,12 @@ class ControllerBackupFolders:
             "Téléchargements",
             "Vidéos",
         ]
-        self.views.f_string_head()
 
     def backup_or_restore(self) -> None:
         """
         Select option of type de synchronisation
         """
-        self.type_synchronisation = self.views.f_string_backup_or_restore()
+        self.type_synchronisation = self.views.backup_or_restore()
 
     def path_of_destination(self) -> None:
         """
@@ -65,6 +65,8 @@ class ControllerBackupFolders:
         Rsync the folder user (sync ssd disk to laptop) if self.type_synchronisation = 2
         """
 
+        os.system("clear")
+
         if self.rsync_option in ("-rtlogvh", "-rtlongvh"):
             self.folders.remove("Images")
 
@@ -78,12 +80,10 @@ class ControllerBackupFolders:
                     f"{self.path}/{os.getlogin()}/home_mike/{folder}/"
                 )
 
-                self.views.f_string_lines()
-
             if self.type_synchronisation == 2:
                 os.system(
                     f"rsync {self.rsync_option} {self.path}/{os.getlogin()}/home_mike/{folder}/ "
                     f"{self.name_home_user}/{folder}/"
                 )
 
-                self.views.f_string_lines()
+            self.views.f_string_line("=", "", "\n\n\n")

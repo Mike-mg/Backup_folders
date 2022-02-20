@@ -10,32 +10,32 @@ class ViewsToBackup:
     """
 
     def __init__(self):
-        self.nb_lines = f"{'=' * 50}"
+        self.f_string_head()
 
     def f_string_head(self) -> None:
         """
         Head string the program
         """
 
-        print(
-            f"\n{self.nb_lines}\n\n"
-            f"[ Synchronisation of folder '/home/{os.getlogin()}/' ]\n\n"
-            f"{self.nb_lines}\n\n"
-        )
+        self.f_string_line("=", "\n", "\n")
+        print(f"[ Synchronisation of folder '/home/{os.getlogin()}/' ]")
+        self.f_string_line("=", "\n", "\n")
 
-    def f_string_lines(self):
-        print(f"\n{self.nb_lines}\n\n")
+    def f_string_line(self, symbol: str = "", n_1: str = "", n_2: str = "") -> None:
+        print(f"{n_1}{symbol * 100}{n_2}")
 
-    def f_string_backup_or_restore(self) -> int:
+    def backup_or_restore(self) -> int:
 
         choice_backup_or_restore = int(
             input(
-                f"{'Select option of type de synchronisation :'}\n\n"
+                f"\n\n{'Select option of type de synchronisation :'}\n\n"
                 f"\t{'[ 1 ] Backup of laptop to SSD'}\n"
                 f"\t{'[ 2 ] Restore from SSD to laptop'}\n\n"
                 f"- Select option : "
             )
         )
+
+        self.f_string_line("#", "\n\n", "\n\n")
 
         return choice_backup_or_restore
 
@@ -43,7 +43,7 @@ class ViewsToBackup:
         """
         Get the destination path
         """
-        print("\n\n")
+
         os.system("lsblk -f")
 
         path = input("\n\n- Destination directory path : ")
@@ -51,6 +51,8 @@ class ViewsToBackup:
         for folder in folders:
             folder = f"{path}/{os.getlogin()}/home_mike/{folder}/"
             os.makedirs(folder, exist_ok=True)
+
+        self.f_string_line("#", "\n\n", "\n\n")
 
         return path
 
@@ -63,7 +65,7 @@ class ViewsToBackup:
 
         choice = int(
             input(
-                f"\n\n{select_option}\n{'-' * len(select_option)}\n\n"
+                f"{select_option}\n{'-' * len(select_option)}\n\n"
                 f"\t[ 1 ] Direct sync (Ext4)\n"
                 f"\t[ 2 ] Dry-run sync (checking for differences) - (Ext4)\n"
                 f"\t[ 3 ] Direct sync (Ntfs)\n"
@@ -72,6 +74,8 @@ class ViewsToBackup:
             )
         )
 
+        self.f_string_line("#", "\n\n", "\n\n")
+
         return choice
 
     def f_string_folder_sync(self, folder) -> None:
@@ -79,5 +83,8 @@ class ViewsToBackup:
         Folder synchronized
         """
 
+        self.f_string_line("=", "\n\n")
+
         path_folder = f"> Synchronisation of folder '{folder}'"
-        print(f"\n\n{self.nb_lines}\n" f"{path_folder}\n" f"{'-' * len(path_folder)}\n")
+
+        print(f"{'':<25}{path_folder:<25}\n" f"{'':<25}{'-' * len(path_folder)}\n")

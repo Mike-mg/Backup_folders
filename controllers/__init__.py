@@ -1,4 +1,4 @@
 """
 import class controllers
 """
-from .controller_rsync import ControllerBackupFolders
+from controllers.controller_rsync import ControllerBackupFolders

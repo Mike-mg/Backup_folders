@@ -16,7 +16,7 @@ def main():
 
     os.system("clear")
 
-    backup = controllers.controller_rsync.ControllerBackupFolders()
+    backup = controllers.ControllerBackupFolders()
     backup.backup_or_restore()
     backup.path_of_destination()
     backup.select_option_rsync()
