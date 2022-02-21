@@ -41,8 +41,8 @@ class ViewsToBackup:
         choice_backup_or_restore = int(
             input(
                 f"\n\n{'Select option of type de synchronisation :'}\n\n"
-                f"\t{'[ 1 ] Backup of laptop to SSD'}\n"
-                f"\t{'[ 2 ] Restore from SSD to laptop'}\n\n"
+                f"{'[ 1 ] -> Backup of laptop to SSD'}\n"
+                f"{'[ 2 ] -> Restore from SSD to laptop'}\n\n"
                 f"- Select option : "
             )
         )
@@ -78,10 +78,10 @@ class ViewsToBackup:
         choice = int(
             input(
                 f"{select_option}\n{'-' * len(select_option)}\n\n"
-                f"\t[ 1 ] Direct sync (Ext4)\n"
-                f"\t[ 2 ] Dry-run sync (checking for differences) - (Ext4)\n"
-                f"\t[ 3 ] Direct sync (Ntfs)\n"
-                f"\t[ 4 ] Dry-run sync (checking for differences) - (Ntfs)\n\n"
+                f"[ 1 ] -> Direct sync (Ext4)\n"
+                f"[ 2 ] -> Dry-run sync (checking for differences) - (Ext4)\n"
+                f"[ 3 ] -> Direct sync (Ntfs)\n"
+                f"[ 4 ] -> Dry-run sync (checking for differences) - (Ntfs)\n\n"
                 f"- Select option : "
             )
         )
