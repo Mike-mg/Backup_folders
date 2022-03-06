@@ -5,6 +5,7 @@
 Save and restore all folders user
 """
 
+import json
 import os
 
 import views
@@ -16,32 +17,48 @@ class ControllerBackupFolders:
     """
 
     def __init__(self):
+
         self.views = views.ViewsToBackup()
-        self.name_home_user = f"/home/{os.getlogin()}/"
-        self.path = ""
+        self.users_list = self.get_data_dict_users()
+        self.user_selected = ""
+        self.path_source_and_destination = []
         self.rsync_option = ""
-        self.type_synchronisation = int()
-        self.folders = [
-            "Documents",
-            "GitHub",
-            "Images",
-            "Mes_projets",
-            "OC_DA_Python",
-            "Téléchargements",
-            "Vidéos",
-        ]
+        self.choice_menu = int()
+        
+    def menu(self) -> None:
+        """
+        Menu management
+        """
 
-    def backup_or_restore(self) -> None:
-        """
-        Select option of type de synchronisation
-        """
-        self.type_synchronisation = self.views.backup_or_restore()
+        while True:
+            
+            self.choice_menu = self.views.select_choice_menu()
 
-    def path_of_destination(self) -> None:
+            if self.choice_menu == 1:
+                self.user_selected = self.views.select_choice_user(self.users_list)
+                self.path_source_and_destination = self.views.f_string_path_of_source_and_destination()
+                self.path_source_and_destination[0] = f"{self.path_source_and_destination[0]}/{self.user_selected}/"
+                self.path_source_and_destination[1] = f"{self.path_source_and_destination[1]}/{self.user_selected}/"
+                self.select_option_rsync()
+                self.synchronisation()
+
+            if self.choice_menu == 2:
+                break                
+
+    def get_data_dict_users(self) -> list[dict]:
         """
-        Get the destination path
+        get users data base
         """
-        self.path = self.views.f_string_path_of_destination(self.folders)
+
+        users_list = []
+
+        with open("bdd_users/list_users.json", "r", encoding='utf-8') as file:
+            data = json.load(file)
+            
+            for user in data["users"]:
+                users_list.append(user)
+
+        return users_list
 
     def select_option_rsync(self) -> None:
         """
@@ -61,29 +78,12 @@ class ControllerBackupFolders:
 
     def synchronisation(self) -> None:
         """
-        Rsync the folder user (sync laptop to ssd disk) if self.type_synchronisation = 1
-        Rsync the folder user (sync ssd disk to laptop) if self.type_synchronisation = 2
+        Synchronized the folders user
         """
 
-        os.system("clear")
-
-        if self.rsync_option in ("-rtlogvh", "-rtlongvh"):
-            self.folders.remove("Images")
-
-        for folder in self.folders:
-
-            self.views.f_string_folder_sync(folder)
-
-            if self.type_synchronisation == 1:
-                os.system(
-                    f"rsync {self.rsync_option} --delete /home/{os.getlogin()}/{folder}/ "
-                    f"{self.path}/{os.getlogin()}/home_mike/{folder}/"
+        os.system(
+            f"rsync {self.rsync_option} --delete --exclude='.*/' --exclude='.*' {self.path_source_and_destination[0]} "
+            f"{self.path_source_and_destination[1]}"
                 )
 
-            if self.type_synchronisation == 2:
-                os.system(
-                    f"rsync {self.rsync_option} {self.path}/{os.getlogin()}/home_mike/{folder}/ "
-                    f"{self.name_home_user}/{folder}/"
-                )
-
-            self.views.f_string_line("=", "", "\n\n\n")
+        self.views.f_string_line("=", "", "\n\n\n")

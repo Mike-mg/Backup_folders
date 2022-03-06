@@ -5,23 +5,27 @@
 Program entry point
 """
 
-import os
+
 import controllers
 
 
-def main():
+class Main:
     """
-    Program entry point
+    Entry point
     """
 
-    os.system("clear")
+    def __init__(self):
+        self.controllers = controllers.ControllerBackupFolders()
 
-    backup = controllers.ControllerBackupFolders()
-    backup.backup_or_restore()
-    backup.path_of_destination()
-    backup.select_option_rsync()
-    backup.synchronisation()
+
+    def main(self):
+        """
+        Program entry point
+        """
+        
+        self.controllers.menu()
 
 
 if __name__ == "__main__":
-    main()
+    main = Main()
+    main.main()
