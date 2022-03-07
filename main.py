@@ -9,23 +9,13 @@ Program entry point
 import controllers
 
 
-class Main:
+def main():
     """
-    Entry point
+    Program entry point
     """
-
-    def __init__(self):
-        self.controllers = controllers.ControllerBackupFolders()
-
-
-    def main(self):
-        """
-        Program entry point
-        """
-        
-        self.controllers.menu()
+    start_main = controllers.ControllerBackupFolders()
+    start_main.menu()
 
 
 if __name__ == "__main__":
-    main = Main()
-    main.main()
+    main()

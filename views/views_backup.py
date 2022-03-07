@@ -5,9 +5,8 @@
 Method views of Backup home folders
 """
 
-import os
 
-import controllers
+import os
 
 
 class ViewsToBackup:
@@ -19,9 +18,9 @@ class ViewsToBackup:
         self.nb_repeat = 100
         self.clear = os.system("clear")
 
-    def f_string_line(self, symbol: str = "", nb_up_1: str = "", nb_up_2: str = "") -> None:
+    def _line(self, symbol: str = "", nb_up_1: str = "", nb_up_2: str = "") -> None:
         """
-        Show an line of symbol
+        Show an _line of symbol
         """
 
         print(f"{nb_up_1}{symbol * self.nb_repeat}{nb_up_2}")
@@ -31,9 +30,9 @@ class ViewsToBackup:
         Select of the choice of menu
         """
 
-        self.f_string_line("=", "\n", "\n")
+        self._line("=", "\n", "\n")
         print(f"{'':<20}{'[ Synchronization and restoration of folders ]'}")
-        self.f_string_line("=", "\n", "\n\n\n")
+        self._line("=", "\n", "\n\n\n")
 
         select_choice_menu = int(
             input(
@@ -44,38 +43,96 @@ class ViewsToBackup:
             )
         )
 
-        self.f_string_line("#", "\n", "\n")
+        self._line("#", "\n", "\n")
 
         return select_choice_menu
 
-    def select_choice_user(self, list_users: list(dict())) -> str:
+    def select_choice_user(self, list_users: list({})) -> str:
         """
         Select user
         """
         user_selected = ""
 
         print(f"Select user for the synchronization : \n{'-' * 37}\n")
-        
+
         for id_user in list_users:
             print(f"[ {id_user['number_id']} ] {id_user['name']}")
-        
-        select_choice_user = int(input(f"\n- Select user : "))
+
+        select_choice_user = int(input("\n- Select user : "))
 
         for user_select in list_users:
-            
-            if select_choice_user == user_select['number_id']:
-                user_selected = user_select['name_id']
+
+            if select_choice_user == user_select["number_id"]:
+                user_selected = user_select["name_id"]
 
         return user_selected
 
-    def f_string_path_of_source_and_destination(self) -> list:
+    def next_or_not(self) -> int:
+        """
+        Select if continue program
+        """
+
+        string_option_next = "Continue program or not :"
+
+        select_next_option = int(
+            input(
+                f"{string_option_next}\n{'-' * len(string_option_next)}\n\n"
+                f"{'[ 1 ] Yes'}\n"
+                f"{'[ 2 ] No (Quit program)'}\n\n"
+                f"- Select option : "
+            )
+        )
+
+        os.system("clear")
+
+        return select_next_option
+
+    def folders_backup_selected(self, folder_source):
+        """
+        Select folder for sync
+        """
+
+        list_folders_of_path = os.listdir(folder_source)
+        folders_for_sync = []
+        folders_selected = []
+
+        string_select_folder = "Which folders should be synchronized :"
+
+        print(f"{string_select_folder}\n{'-' * len(string_select_folder)}\n")
+
+        for folder in list_folders_of_path:
+            if "." not in folder:
+                folders_for_sync.append(folder)
+
+        for index, folder in enumerate(folders_for_sync):
+            print(f"[ {index} ] {folder}")
+
+        print(f"[ {len(folders_for_sync)} ] All folders")
+
+        choice_folders = input("\n\n- Selecting folders and files (Ex: 1,2,3,4): ")
+
+        if int(choice_folders) == len(folders_for_sync):
+            for folder in folders_for_sync:
+                folders_selected.append(folder)
+
+        else:
+            choice_folders = choice_folders.split(",")
+
+            for choice in choice_folders:
+                folders_selected.append(folders_for_sync[int(choice)])
+
+        self._line("#", "\n", "\n")
+
+        return folders_selected
+
+    def path_of_source_and_destination(self) -> list:
         """
         Get the destination path
         """
 
         all_path = []
 
-        self.f_string_line("#", "\n", "\n")
+        self._line("#", "\n", "\n")
 
         os.system("lsblk -f")
 
@@ -85,11 +142,11 @@ class ViewsToBackup:
         all_path.append(source)
         all_path.append(destination)
 
-        self.f_string_line("#", "\n", "\n")
+        self._line("#", "\n", "\n")
 
         return all_path
 
-    def f_string_select_option_rsync(self) -> int:
+    def select_option_rsync(self) -> int:
         """
         Select option for rsync
         """
@@ -107,18 +164,17 @@ class ViewsToBackup:
             )
         )
 
-        self.f_string_line("#", "\n", "\n")
+        self._line("#", "\n", "\n")
 
         return choice
 
-    def f_string_folder_sync(self, folder) -> None:
+    def folder_sync(self, folder) -> None:
         """
         Folder synchronized
         """
 
-        self.f_string_line("=", "\n\n")
+        self._line("=", "\n\n")
 
         path_folder = f"> Synchronisation of folder '{folder}'"
 
         print(f"{'':<25}{path_folder:<25}\n" f"{'':<25}{'-' * len(path_folder)}\n")
-        
