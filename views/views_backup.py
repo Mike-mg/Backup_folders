@@ -6,6 +6,7 @@ Method views of Backup home folders
 """
 
 
+import json
 import os
 
 
@@ -16,6 +17,9 @@ class ViewsToBackup:
 
     def __init__(self):
         self.nb_repeat = 100
+        self.user = ""
+        self.path_source = ""
+        self.path_destination =""
         self.clear = os.system("clear")
 
     def _line(self, symbol: str = "", nb_up_1: str = "", nb_up_2: str = "") -> None:
@@ -43,51 +47,40 @@ class ViewsToBackup:
             )
         )
 
-        self._line("#", "\n", "\n")
+        self._line("#", "\n\n", "\n\n")
 
         return select_choice_menu
 
-    def select_choice_user(self, list_users: list({})) -> str:
+    def sub_menu(self, title_sub_menu: str , *args: str) -> int:
         """
-        Select user
+        show sub menu
         """
-        user_selected = ""
 
-        print(f"Select user for the synchronization : \n{'-' * 37}\n")
+        self._line("#", "\n\n", "\n\n")
 
-        for id_user in list_users:
-            print(f"[ {id_user['number_id']} ] {id_user['name']}")
+        string_sub_menu = title_sub_menu
+        sub_text = args
+        nb_range = len(sub_text)
+        print(f"{string_sub_menu}\n{'-' * len(string_sub_menu)}\n")
 
-        select_choice_user = int(input("\n- Select user : "))
+        for i in range(0, nb_range):
+            print(f"[ {i} ] {sub_text[i]}")
 
-        for user_select in list_users:
+        choice_sub_menu = int(input(f"- Select option : "))
 
-            if select_choice_user == user_select["number_id"]:
-                user_selected = user_select["name_id"]
+        return choice_sub_menu
 
-        return user_selected
-
-    def next_or_not(self) -> int:
+    def next_or_not(self):
         """
         Select if continue program
         """
 
-        string_option_next = "Continue program or not :"
-
-        select_next_option = int(
-            input(
-                f"{string_option_next}\n{'-' * len(string_option_next)}\n\n"
-                f"{'[ 1 ] Yes'}\n"
-                f"{'[ 2 ] No (Quit program)'}\n\n"
-                f"- Select option : "
-            )
+        return self.sub_menu("Continue program or not :",
+        "Yes", 
+        "No (Quit program)\n",
         )
 
-        os.system("clear")
-
-        return select_next_option
-
-    def folders_backup_selected(self, folder_source):
+    def folders_backup_selected(self, folder_source) -> list:
         """
         Select folder for sync
         """
@@ -109,64 +102,79 @@ class ViewsToBackup:
 
         print(f"[ {len(folders_for_sync)} ] All folders")
 
-        choice_folders = input("\n\n- Selecting folders and files (Ex: 1,2,3,4): ")
+        choice_folders = input("\n- Selecting folders and files (Ex: 1,2,3,4): ")
+        choice_folders = choice_folders.split(',')
+        choice_folders = [int(i) for i in choice_folders]
 
-        if int(choice_folders) == len(folders_for_sync):
-            for folder in folders_for_sync:
-                folders_selected.append(folder)
-
+        if choice_folders[0] == len(folders_for_sync): 
+                folders_selected = folders_for_sync
         else:
-            choice_folders = choice_folders.split(",")
-
-            for choice in choice_folders:
-                folders_selected.append(folders_for_sync[int(choice)])
-
-        self._line("#", "\n", "\n")
+            for folder in choice_folders:
+                folders_selected.append(folders_for_sync[folder])
 
         return folders_selected
 
-    def path_of_source_and_destination(self) -> list:
+    def get_user_user_and_path_source_and_destination(self, list_users: list({})) -> tuple:
         """
-        Get the destination path
+        Get users and the source/destination path
         """
 
-        all_path = []
+        while True:
+            print(f"Select user for the synchronization : \n{'-' * 37}\n")
 
-        self._line("#", "\n", "\n")
+            for id_user in list_users:
+                print(f"[ {id_user['number_id']} ] {id_user['name']}")
 
-        os.system("lsblk -f")
+            select_choice_user = int(input("\n- Select user : "))
 
-        source = input("\n\n- Source directory path : ")
-        destination = input("- Destination directory path : ")
+            for user_select in list_users:
 
-        all_path.append(source)
-        all_path.append(destination)
+                if select_choice_user == user_select["number_id"]:
+                    self.user = user_select["name_id"]
 
-        self._line("#", "\n", "\n")
+            self._line("#", "\n\n", "\n\n")
 
-        return all_path
+            os.system("lsblk -J > data_base/lsblk.json")
+            
+            disk_mount = []
+            with open("data_base/lsblk.json", "r", encoding='UTF-8') as file:
+                data = json.load(file)
+                
+                for disk in data["blockdevices"]:
+                    if "sd" in disk["name"]:
+                        for index, path_disk in enumerate(disk["children"]):
+                            if path_disk["mountpoints"][0] != None:
+                                if path_disk["mountpoints"][0] == "/home":
+                                    path_disk["mountpoints"][0] = f"/home/{self.user}"
+                                disk_mount.append(path_disk["mountpoints"][0])
+
+            
+            string_select_folder = "Source and destination path : "
+            print(f"{string_select_folder}\n{'-' * len(string_select_folder)}\n")
+            
+            for index, path_disk_mount in enumerate(disk_mount):
+                print(f"[ {index} ] {path_disk_mount}")
+
+            choice_path_source = int(input("\n- Select the source : "))
+            choice_path_destination = int(input("- Select the destination : "))
+
+            self.path_source = disk_mount[choice_path_source]
+            self.path_destination = disk_mount[choice_path_destination]
+            self._line("#", "\n\n", "\n\n")
+
+            return f"{self.path_source}", f"{self.path_destination}/{self.user}"
 
     def select_option_rsync(self) -> int:
         """
         Select option for rsync
         """
 
-        select_option = "Select option for rsync :"
-
-        choice = int(
-            input(
-                f"{select_option}\n{'-' * len(select_option)}\n\n"
-                f"[ 1 ] Direct sync (Ext4)\n"
-                f"[ 2 ] Dry-run sync (checking for differences) - (Ext4)\n"
-                f"[ 3 ] Direct sync (Ntfs)\n"
-                f"[ 4 ] Dry-run sync (checking for differences) - (Ntfs)\n\n"
-                f"- Select option : "
-            )
+        return self.sub_menu("Select option for rsync :",
+        "Direct sync (Ext4)",
+        "Dry-run sync (checking for differences) - (Ext4)",
+        "Direct sync (Ntfs)",
+        "Dry-run sync (checking for differences) - (Ntfs)\n"
         )
-
-        self._line("#", "\n", "\n")
-
-        return choice
 
     def folder_sync(self, folder) -> None:
         """
@@ -178,3 +186,8 @@ class ViewsToBackup:
         path_folder = f"> Synchronisation of folder '{folder}'"
 
         print(f"{'':<25}{path_folder:<25}\n" f"{'':<25}{'-' * len(path_folder)}\n")
+
+
+
+
+# nb line = 180

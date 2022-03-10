@@ -20,8 +20,7 @@ class ControllerBackupFolders:
 
         self.views = views.ViewsToBackup()
         self.users_list = self._get_data_dict_users()
-        self.user_selected = ""
-        self.path_source_and_destination = []
+        self.source_destination = ()
         self.rsync_option = ""
         self.choice_menu = int()
         self.folders_selected = []
@@ -37,23 +36,19 @@ class ControllerBackupFolders:
 
             if self.choice_menu == 1:
 
-                self.user_selected = self.views.select_choice_user(self.users_list)
-                self.path_source_and_destination = (
-                    self.views.path_of_source_and_destination()
-                )
-                self.path_source_and_destination[
-                    0
-                ] = f"{self.path_source_and_destination[0]}/{self.user_selected}/"
-                self.path_source_and_destination[
-                    1
-                ] = f"{self.path_source_and_destination[1]}/{self.user_selected}/"
+                self.source_destination = self.views.get_user_user_and_path_source_and_destination(self.users_list)
 
                 self.folders_selected = self.views.folders_backup_selected(
-                    self.path_source_and_destination[0]
+                    self.source_destination[0]
                 )
                 self._select_option_rsync()
+                os.system('clear')
                 self._synchronisation()
+                
                 self.choice_menu = self.views.next_or_not()
+                if self.choice_menu == 1:
+                    os.system('clear')
+                    break
 
             if self.choice_menu == 2:
                 break
@@ -65,7 +60,7 @@ class ControllerBackupFolders:
 
         users_list = []
 
-        with open("bdd_users/list_users.json", "r", encoding="utf-8") as file:
+        with open("data_base/list_users.json", "r", encoding="utf-8") as file:
             data = json.load(file)
 
             for user in data["users"]:
@@ -95,13 +90,12 @@ class ControllerBackupFolders:
         """
         for folder in self.folders_selected:
             if " " in folder:
-                folder = '"' + folder + '"'
-
+                folder = f"'{folder}'"
             self.views.folder_sync(folder)
 
             os.system(
                 f"rsync {self.rsync_option} --delete "
-                f"{self.path_source_and_destination[0]}{folder}/ {self.path_source_and_destination[1]}{folder}/"
+                f"{self.source_destination[0]}/{folder}/ {self.source_destination[1]}/{folder}/"
             )
 
-        self.views._line("#", "\n", "\n")
+# nb line = 108
