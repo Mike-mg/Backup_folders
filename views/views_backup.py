@@ -19,7 +19,8 @@ class ViewsToBackup:
         self.nb_repeat = 100
         self.user = ""
         self.path_source = ""
-        self.path_destination =""
+        self.path_destination = ""
+        self.folders_selected = []
         self.clear = os.system("clear")
 
     def _line(self, symbol: str = "", nb_up_1: str = "", nb_up_2: str = "") -> None:
@@ -51,7 +52,7 @@ class ViewsToBackup:
 
         return select_choice_menu
 
-    def sub_menu(self, title_sub_menu: str , *args: str) -> int:
+    def sub_menu(self, title_sub_menu: str, *args: str) -> int:
         """
         show sub menu
         """
@@ -66,7 +67,7 @@ class ViewsToBackup:
         for i in range(0, nb_range):
             print(f"[ {i} ] {sub_text[i]}")
 
-        choice_sub_menu = int(input(f"- Select option : "))
+        choice_sub_menu = int(input("- Select option : "))
 
         return choice_sub_menu
 
@@ -75,9 +76,10 @@ class ViewsToBackup:
         Select if continue program
         """
 
-        return self.sub_menu("Continue program or not :",
-        "Yes", 
-        "No (Quit program)\n",
+        return self.sub_menu(
+            "Continue program or not :",
+            "Yes",
+            "No (Quit program)\n",
         )
 
     def folders_backup_selected(self, folder_source) -> list:
@@ -103,18 +105,20 @@ class ViewsToBackup:
         print(f"[ {len(folders_for_sync)} ] All folders")
 
         choice_folders = input("\n- Selecting folders and files (Ex: 1,2,3,4): ")
-        choice_folders = choice_folders.split(',')
+        choice_folders = choice_folders.split(",")
         choice_folders = [int(i) for i in choice_folders]
 
-        if choice_folders[0] == len(folders_for_sync): 
-                folders_selected = folders_for_sync
+        if choice_folders[0] == len(folders_for_sync):
+            self.folders_selected = folders_for_sync
         else:
             for folder in choice_folders:
-                folders_selected.append(folders_for_sync[folder])
+                self.folders_selected.append(folders_for_sync[folder])
 
         return folders_selected
 
-    def get_user_user_and_path_source_and_destination(self, list_users: list({})) -> tuple:
+    def get_user_user_and_path_source_and_destination(
+        self, list_users: list({})
+    ) -> tuple:
         """
         Get users and the source/destination path
         """
@@ -135,23 +139,22 @@ class ViewsToBackup:
             self._line("#", "\n\n", "\n\n")
 
             os.system("lsblk -J > data_base/lsblk.json")
-            
+
             disk_mount = []
-            with open("data_base/lsblk.json", "r", encoding='UTF-8') as file:
+            with open("data_base/lsblk.json", "r", encoding="UTF-8") as file:
                 data = json.load(file)
-                
+
                 for disk in data["blockdevices"]:
                     if "sd" in disk["name"]:
                         for index, path_disk in enumerate(disk["children"]):
-                            if path_disk["mountpoints"][0] != None:
+                            if path_disk["mountpoints"][0] is not None:
                                 if path_disk["mountpoints"][0] == "/home":
                                     path_disk["mountpoints"][0] = f"/home/{self.user}"
                                 disk_mount.append(path_disk["mountpoints"][0])
 
-            
             string_select_folder = "Source and destination path : "
             print(f"{string_select_folder}\n{'-' * len(string_select_folder)}\n")
-            
+
             for index, path_disk_mount in enumerate(disk_mount):
                 print(f"[ {index} ] {path_disk_mount}")
 
@@ -169,11 +172,12 @@ class ViewsToBackup:
         Select option for rsync
         """
 
-        return self.sub_menu("Select option for rsync :",
-        "Direct sync (Ext4)",
-        "Dry-run sync (checking for differences) - (Ext4)",
-        "Direct sync (Ntfs)",
-        "Dry-run sync (checking for differences) - (Ntfs)\n"
+        return self.sub_menu(
+            "Select option for rsync :",
+            "Direct sync (Ext4)",
+            "Dry-run sync (checking for differences) - (Ext4)",
+            "Direct sync (Ntfs)",
+            "Dry-run sync (checking for differences) - (Ntfs)\n",
         )
 
     def folder_sync(self, folder) -> None:
@@ -186,8 +190,6 @@ class ViewsToBackup:
         path_folder = f"> Synchronisation of folder '{folder}'"
 
         print(f"{'':<25}{path_folder:<25}\n" f"{'':<25}{'-' * len(path_folder)}\n")
-
-
 
 
 # nb line = 180
