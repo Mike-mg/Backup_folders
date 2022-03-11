@@ -18,11 +18,13 @@ class ControllerBackupFolders:
 
     def __init__(self):
 
+        os.system("clear")
         self.views = views.ViewsToBackup()
-        self.users_list = []
+        self.choice_menu = int()
+        self.user = ""
+        self.user_list = []
         self.source_destination = ()
         self.rsync_option = ""
-        self.choice_menu = int()
         self.folders_selected = []
 
     def menu(self) -> None:
@@ -35,29 +37,21 @@ class ControllerBackupFolders:
             self.choice_menu = self.views.select_choice_menu()
 
             if self.choice_menu == 1:
-
-                self.source_destination = (
-                    self.views.get_user_user_and_path_source_and_destination(
-                        self.users_list
-                    )
-                )
-
+                self.user = self.views.get_users(self.get_data_dict_users())
+                self.source_destination = self.views.get_path_source_and_destination()
                 self.folders_selected = self.views.folders_backup_selected(
                     self.source_destination[0]
                 )
-                self._select_option_rsync()
-                os.system("clear")
-                self._synchronisation()
-
-                self.choice_menu = self.views.next_or_not()
-                if self.choice_menu == 1:
-                    os.system("clear")
+                self.select_option_rsync()
+                self.synchronisation()
+                if self.views.next_or_not() == 1:
                     break
+                os.system("clear")
 
-            if self.choice_menu == 2:
+            elif self.choice_menu == 2:
                 break
 
-    def _get_data_dict_users(self) -> list[dict]:
+    def get_data_dict_users(self) -> list[dict]:
         """
         get users data base
         """
@@ -66,27 +60,27 @@ class ControllerBackupFolders:
             data = json.load(file)
 
             for user in data["users"]:
-                self.users_list.append(user)
+                self.user_list.append(user)
 
-        return self.users_list
+        return self.user_list
 
-    def _select_option_rsync(self) -> None:
+    def select_option_rsync(self) -> None:
         """
         Select option for rsync
         """
 
         choice = self.views.select_option_rsync()
 
-        if choice == 1:
+        if choice == 0:
             self.rsync_option = "-avh"
-        elif choice == 2:
+        elif choice == 1:
             self.rsync_option = "-navh"
-        elif choice == 3:
+        elif choice == 2:
             self.rsync_option = "-rtlogvh"
-        elif choice == 4:
+        elif choice == 3:
             self.rsync_option = "-rtlongvh"
 
-    def _synchronisation(self) -> None:
+    def synchronisation(self) -> None:
         """
         Synchronized the folders user
         """
@@ -102,4 +96,4 @@ class ControllerBackupFolders:
             )
 
 
-# nb line = 108
+# nb line = 108, 98

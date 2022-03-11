@@ -17,11 +17,10 @@ class ViewsToBackup:
 
     def __init__(self):
         self.nb_repeat = 100
-        self.user = ""
+        self.user = os.getlogin()
         self.path_source = ""
         self.path_destination = ""
         self.folders_selected = []
-        self.clear = os.system("clear")
 
     def _line(self, symbol: str = "", nb_up_1: str = "", nb_up_2: str = "") -> None:
         """
@@ -69,9 +68,11 @@ class ViewsToBackup:
 
         choice_sub_menu = int(input("- Select option : "))
 
+        self._line("#", "\n\n", "\n\n")
+
         return choice_sub_menu
 
-    def next_or_not(self):
+    def next_or_not(self) -> int:
         """
         Select if continue program
         """
@@ -89,8 +90,6 @@ class ViewsToBackup:
 
         list_folders_of_path = os.listdir(folder_source)
         folders_for_sync = []
-        folders_selected = []
-
         string_select_folder = "Which folders should be synchronized :"
 
         print(f"{string_select_folder}\n{'-' * len(string_select_folder)}\n")
@@ -114,27 +113,32 @@ class ViewsToBackup:
             for folder in choice_folders:
                 self.folders_selected.append(folders_for_sync[folder])
 
-        return folders_selected
+        return self.folders_selected
 
-    def get_user_user_and_path_source_and_destination(
-        self, list_users: list({})
-    ) -> tuple:
+    def get_users(self, list_users: list({})):
+        """
+        Get users
+        """
+
+        print(f"Select user for the synchronization : \n{'-' * 37}\n")
+
+        for id_user in list_users:
+            print(f"[ {id_user['number_id']} ] {id_user['name']}")
+
+        select_choice_user = int(input("\n- Select user : "))
+
+        for user_select in list_users:
+
+            if select_choice_user == user_select["number_id"]:
+                self.user = user_select["name_id"]
+        return self.user
+
+    def get_path_source_and_destination(self) -> tuple:
         """
         Get users and the source/destination path
         """
 
         while True:
-            print(f"Select user for the synchronization : \n{'-' * 37}\n")
-
-            for id_user in list_users:
-                print(f"[ {id_user['number_id']} ] {id_user['name']}")
-
-            select_choice_user = int(input("\n- Select user : "))
-
-            for user_select in list_users:
-
-                if select_choice_user == user_select["number_id"]:
-                    self.user = user_select["name_id"]
 
             self._line("#", "\n\n", "\n\n")
 
@@ -145,11 +149,15 @@ class ViewsToBackup:
                 data = json.load(file)
 
                 for disk in data["blockdevices"]:
+
                     if "sd" in disk["name"]:
                         for index, path_disk in enumerate(disk["children"]):
-                            if path_disk["mountpoints"][0] is not None:
-                                if path_disk["mountpoints"][0] == "/home":
-                                    path_disk["mountpoints"][0] = f"/home/{self.user}"
+                            if path_disk["mountpoints"][0] == "/home":
+                                disk_mount.append(
+                                    f"{path_disk['mountpoints'][0]}/{self.user}"
+                                )
+
+                            elif path_disk["mountpoints"][0] is not None:
                                 disk_mount.append(path_disk["mountpoints"][0])
 
             string_select_folder = "Source and destination path : "
@@ -192,4 +200,4 @@ class ViewsToBackup:
         print(f"{'':<25}{path_folder:<25}\n" f"{'':<25}{'-' * len(path_folder)}\n")
 
 
-# nb line = 180
+# nb line = 180, 194
