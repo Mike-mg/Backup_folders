@@ -63,9 +63,14 @@ class OpenFile:
                     if "sd" in disk["name"]:
                         for index, path_disk in enumerate(disk["children"]):
                             if path_disk["mountpoints"][0] == "/home":
-                                disk_mount.append(
-                                    f"{path_disk['mountpoints'][0]}/{self.user}"
-                                )
+                                if self.user == "mike":
+                                    disk_mount.append(
+                                        f"{path_disk['mountpoints'][0]}/{self.user}"
+                                    )
+                                else:
+                                    disk_mount.append(
+                                        f"{path_disk['mountpoints'][0]}"
+                                    )
 
                             elif path_disk["mountpoints"][0] is not None:
                                 disk_mount.append(path_disk["mountpoints"][0])
