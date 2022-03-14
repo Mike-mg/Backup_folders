@@ -5,10 +5,10 @@
 Save and restore all folders user
 """
 
-import json
 import os
 
 import views
+import data_base
 
 
 class ControllerBackupFolders:
@@ -19,10 +19,10 @@ class ControllerBackupFolders:
     def __init__(self):
 
         os.system("clear")
-        self.views = views.ViewsToBackup()
+        self.views = views.views_backup.ViewsToBackup()
+        self.open_file = data_base.open_file.OpenFile()
         self.choice_menu = int()
         self.user = ""
-        self.user_list = []
         self.source_destination = ()
         self.rsync_option = ""
         self.folders_selected = []
@@ -37,8 +37,9 @@ class ControllerBackupFolders:
             self.choice_menu = self.views.select_choice_menu()
 
             if self.choice_menu == 1:
-                self.user = self.views.get_users(self.get_data_dict_users())
-                self.source_destination = self.views.get_path_source_and_destination()
+
+                self.open_file.open_file_user_list()
+                self.source_destination = self.open_file.open_file_lsblk_path()
                 self.folders_selected = self.views.folders_backup_selected(
                     self.source_destination[0]
                 )
@@ -50,19 +51,6 @@ class ControllerBackupFolders:
 
             elif self.choice_menu == 2:
                 break
-
-    def get_data_dict_users(self) -> list[dict]:
-        """
-        get users data base
-        """
-
-        with open("data_base/list_users.json", "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-            for user in data["users"]:
-                self.user_list.append(user)
-
-        return self.user_list
 
     def select_option_rsync(self) -> None:
         """
@@ -94,6 +82,3 @@ class ControllerBackupFolders:
                 f"rsync {self.rsync_option} --delete "
                 f"{self.source_destination[0]}/{folder}/ {self.source_destination[1]}/{folder}/"
             )
-
-
-# nb line = 108, 98

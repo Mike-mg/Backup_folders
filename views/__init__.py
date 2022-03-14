@@ -1,4 +1,4 @@
 """
 import class views
 """
-from views.views_backup import ViewsToBackup
+from views import views_backup

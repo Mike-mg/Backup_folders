@@ -6,7 +6,6 @@ Method views of Backup home folders
 """
 
 
-import json
 import os
 
 
@@ -115,66 +114,6 @@ class ViewsToBackup:
 
         return self.folders_selected
 
-    def get_users(self, list_users: list({})):
-        """
-        Get users
-        """
-
-        print(f"Select user for the synchronization : \n{'-' * 37}\n")
-
-        for id_user in list_users:
-            print(f"[ {id_user['number_id']} ] {id_user['name']}")
-
-        select_choice_user = int(input("\n- Select user : "))
-
-        for user_select in list_users:
-
-            if select_choice_user == user_select["number_id"]:
-                self.user = user_select["name_id"]
-        return self.user
-
-    def get_path_source_and_destination(self) -> tuple:
-        """
-        Get users and the source/destination path
-        """
-
-        while True:
-
-            self._line("#", "\n\n", "\n\n")
-
-            os.system("lsblk -J > data_base/lsblk.json")
-
-            disk_mount = []
-            with open("data_base/lsblk.json", "r", encoding="UTF-8") as file:
-                data = json.load(file)
-
-                for disk in data["blockdevices"]:
-
-                    if "sd" in disk["name"]:
-                        for index, path_disk in enumerate(disk["children"]):
-                            if path_disk["mountpoints"][0] == "/home":
-                                disk_mount.append(
-                                    f"{path_disk['mountpoints'][0]}/{self.user}"
-                                )
-
-                            elif path_disk["mountpoints"][0] is not None:
-                                disk_mount.append(path_disk["mountpoints"][0])
-
-            string_select_folder = "Source and destination path : "
-            print(f"{string_select_folder}\n{'-' * len(string_select_folder)}\n")
-
-            for index, path_disk_mount in enumerate(disk_mount):
-                print(f"[ {index} ] {path_disk_mount}")
-
-            choice_path_source = int(input("\n- Select the source : "))
-            choice_path_destination = int(input("- Select the destination : "))
-
-            self.path_source = disk_mount[choice_path_source]
-            self.path_destination = disk_mount[choice_path_destination]
-            self._line("#", "\n\n", "\n\n")
-
-            return f"{self.path_source}", f"{self.path_destination}/{self.user}"
-
     def select_option_rsync(self) -> int:
         """
         Select option for rsync
@@ -200,4 +139,4 @@ class ViewsToBackup:
         print(f"{'':<25}{path_folder:<25}\n" f"{'':<25}{'-' * len(path_folder)}\n")
 
 
-# nb line = 180, 194
+# nb line = 180, 194, 185, 139
