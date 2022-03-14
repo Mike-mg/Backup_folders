@@ -16,7 +16,6 @@ class ViewsToBackup:
 
     def __init__(self):
         self.nb_repeat = 100
-        self.user = os.getlogin()
         self.path_source = ""
         self.path_destination = ""
         self.folders_selected = []
@@ -137,6 +136,3 @@ class ViewsToBackup:
         path_folder = f"> Synchronisation of folder '{folder}'"
 
         print(f"{'':<25}{path_folder:<25}\n" f"{'':<25}{'-' * len(path_folder)}\n")
-
-
-# nb line = 180, 194, 185, 139

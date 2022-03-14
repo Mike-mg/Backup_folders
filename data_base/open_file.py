@@ -23,6 +23,25 @@ class OpenFile:
         self.list_users = "data_base/list_users.json"
         self.lsblk = "data_base/lsblk.json"
 
+    def open_file_user_list(self) -> str:
+        """
+        get user
+        """
+        title = "Selected an user of the list users :"
+
+        print(f"{title}\n{'-' * len(title)}\n")
+
+        with open(self.list_users, "r", encoding="utf-8") as file:
+            data = json.load(file)
+
+            for index, user in enumerate(data["users"]):
+                print(f"[ {index} ] {user['name']}")
+
+            choice_user_name = int(input("\nSelected user : "))
+            self.user = data["users"][choice_user_name]["name_id"]
+
+        return self.user
+
     def open_file_lsblk_path(self):
         """
         Read the informations of file
@@ -65,22 +84,3 @@ class OpenFile:
             print(f"\n\n{'#' * 100}\n\n")
 
             return f"{self.path_source}", f"{self.path_destination}/{self.user}"
-
-    def open_file_user_list(self) -> str:
-        """
-        get user
-        """
-        title = "Selected an user of the list users :"
-
-        print(f"{title}\n{'-' * len(title)}\n")
-
-        with open(self.list_users, "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-            for index, user in enumerate(data["users"]):
-                print(f"[ {index} ] {user['name']}")
-
-            choice_user_name = int(input("\nSelected user : "))
-            self.user = data["users"][choice_user_name]["name_id"]
-
-        return self.user
